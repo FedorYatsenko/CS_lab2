@@ -16,17 +16,23 @@ def inverse(value, sign):
 
 def Booth(multiplicand, product, sign):
     for i in range(0, sign):
-        print("  %20s" % format(multiplicand, 'b'))
-        print("  %11s" % format(product, 'b'))
+        print("multiplicand: %s" % format(multiplicand, 'b'))
+        print("product: %s" % format(product, 'b'))
 
         if product & 3 == 1:
+            print("01 add")
+            print("  %11s" % format(product, 'b'))
             product += multiplicand << (sign + 1)
             product = product & (2**(2 * sign + 1) - 1)
             print("+ %11s" % format(multiplicand << (sign + 1), 'b'))
         elif product & 3 == 2:
+            print("10 sub")
+            print("  %11s" % format(product, 'b'))
             product += inverse(multiplicand, sign) << (sign + 1)
             product = product & (2**(2 * sign + 1) - 1)
             print("+ %11s" % format(inverse(multiplicand, sign) << (sign + 1), 'b'))
+        else:
+            print("00 or 11 nop")
 
         spc("_")
         print("  %11s" % format(product, 'b'))

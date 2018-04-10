@@ -15,6 +15,7 @@ def mult(num1, num2):
     ######################################################
     res = ((num1 >> 31) ^ (num2 >> 31)) << 31
 
+    print("Sign: ", (num1 >> 31), " xor ", (num2 >> 31), " = ", ((num1 >> 31) ^ (num2 >> 31)))
     ######################################################
 
     m1 = num1 & 8388607
@@ -22,6 +23,7 @@ def mult(num1, num2):
 
     mantissa = (1.0 + m1 / 8388608) * (1.0 + m2 / 8388608)
 
+    print("mantissa = 1.%s" % format(m1, 'b'), "* 1.%s" % format(m2, 'b'))
     ######################################################
 
     shift = 0
@@ -34,6 +36,7 @@ def mult(num1, num2):
 
     res += int(mantissa)
 
+    print("Normalize mantissa: 1.%s" % format(int(mantissa), 'b'), ", shift: ", shift)
     ######################################################
 
     e1 = (num1 >> 23) & 255
@@ -43,6 +46,8 @@ def mult(num1, num2):
 
     res += exponent << 23
 
+    print("Exponent: (%s - 1111111)" % format(e1, 'b'), " + (%s - 1111111)" % format(e2, 'b'),
+          " + %s" % format(shift, 'b'), " + 1111111")
     ######################################################
 
     return res
@@ -74,5 +79,8 @@ main_num2 = int(input("Input num2: "), 2)
 
 print_num(main_num1)
 print_num(main_num2)
+print("_________________________________________")
 
-print_num(mult(main_num1, main_num2))
+main_res = mult(main_num1, main_num2)
+print("_________________________________________")
+print_num(main_res)
