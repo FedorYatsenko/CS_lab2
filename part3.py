@@ -53,6 +53,59 @@ def mult(num1, num2):
     return res
 
 
+def sum(num1, num2):
+    if num1 & (pow(2, 32) - 1) < num2 & (pow(2, 32) - 1):
+        num1, num2 = num2, num1
+        print("Swap")
+
+    print_num(num1)
+    print_num(num2)
+
+    ######################################################
+    res = (num1 >> 23) << 23
+
+    print("Set sign and exponent:")
+    print_num(res)
+    ######################################################
+    e1 = (num1 >> 23) & 255
+    e2 = (num2 >> 23) & 255
+
+    exp_dif = e1 - e2
+
+    m1 = num1 & 8388607
+    m2 = ((num2 & 8388607) + 8388608) >> exp_dif
+
+    print("  1.%23s" % format(m1, 'b'))
+
+    mantissa = 0
+    if (num1 >> 31) == (num2 >> 31):
+        mantissa += (1.0 + m1 / 8388608) + m2 / 8388608
+        print("+ 0.%23s" % format(m2, 'b'))
+    else:
+        mantissa = (1.0 + m1 / 8388608) - m2 / 8388608
+        print("- 0.%23s" % format(m2, 'b'))
+
+    print("Mantissa: ", mantissa)
+    ######################################################
+    shift = 0
+
+    while mantissa >= 2:
+        shift += 1
+        mantissa /= 2
+
+    while mantissa < 1:
+        shift -= 1
+        mantissa *= 2
+
+    mantissa = ((mantissa - 1) * 8388608) // 1
+    res += int(mantissa)
+
+    #######################################################
+    res += shift << 23
+
+    return res
+
+
 def print_num(num):
     res = ""
 
@@ -84,3 +137,11 @@ print("_________________________________________")
 main_res = mult(main_num1, main_num2)
 print("_________________________________________")
 print_num(main_res)
+print("%s" % format( main_res, 'b'))
+
+print("#############################################################################")
+print("Sum:")
+main_res = sum(main_num1, main_num2)
+print("_________________________________________")
+print_num(main_res)
+print("%s" % format( main_res, 'b'))
